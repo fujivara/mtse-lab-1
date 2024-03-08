@@ -1,20 +1,13 @@
-# Markdown Example
+This is a **bold ** sdf** _text_ example **sdf**
+Here's an _italic_ text example
 
-This is a **bold** text example.
-Here's an *italic* text example.
-
-You can use monospaced text for code snippets like `print("Hello, world!")`.
-
-
+You can use monospaced text for code snippets like `print("Hello, world!")`
 
 Preformatted text can be useful for preserving whitespace:
 
 ```
 def greet(name):
-    print("Hello, " + name)
+    _print("Hello, " + name)_
 greet("world")
 ```
-## Conclusion
-
-
 In conclusion, Markdown is a versatile formatting language that allows you to easily add emphasis, code blocks, and preformatted text to your documents.
