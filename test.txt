@@ -3,7 +3,7 @@ Here's an _italic_ text example
 
 You can use monospaced text for code snippets like `print("Hello, world!")`
 
-Preformatted text can be useful for preserving whitespace:
+Preformatted text can _be_useful_ for preserving whitespace:
 
 ```
 def greet(name):
