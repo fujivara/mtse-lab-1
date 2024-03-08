@@ -1,20 +1,27 @@
-export const paragraphWrapper = (text) => {
+const paragraphWrapper = (text) => {
   return `<p>${text}</p>`;
 };
 
-export const boldWrapper = (text) => {
+const boldWrapper = (text) => {
   return `<b>${text}</b>`;
 };
 
-export const italicWrapper = (text) => {
+const italicWrapper = (text) => {
   return `<i>${text}</i>`;
 };
 
-export const monospaceWrapper = (text) => {
+const monospaceWrapper = (text) => {
   return `<tt>${text}</tt>`;
 };
 
-export const preformattedWrapper = (text) => {
+const preformattedWrapper = (text) => {
   return `<pre>${text}</pre>`;
 };
 
+module.exports = {
+  paragraphWrapper,
+  boldWrapper,
+  italicWrapper,
+  monospaceWrapper,
+  preformattedWrapper,
+};
