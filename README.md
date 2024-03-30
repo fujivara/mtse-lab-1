@@ -17,7 +17,7 @@ git clone <посилання на репозиторій>
 2. Запустіть проект, передавши шлях до файлу у форматі Markdown як аргумент командного рядка та формат виводу:
 
 ```
-node index.js <inputPath> [--format=html | --format=ansi]
+node ./src/index.js <inputPath> [--format=html | --format=ansi]
 ```
 
 ## Використання
