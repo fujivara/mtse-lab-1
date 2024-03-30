@@ -1,71 +1,14 @@
-const { argv } = require('node:process');
-const fs = require('node:fs').promises;
+const { promises: fs} = require("node:fs");
 const {
   boldWrapper,
-  paragraphWrapper,
   italicWrapper,
-  monospaceWrapper,
   preformattedWrapper,
-} = require('./html-wrappers');
-const { boldAnsiWrapper, italicAnsiWrapper, commonAnsiWrapper } = require('./ansi-wrappers');
-
-const BOLD_REGEX = /\*\*/g;
-const ITALIC_REGEX = /_/g;
-const MONOSPACE_REGEX = /`/g;
-const PREFORMATTED_REGEX = /```\n([\s\S]*?)```/g;
-const TEXT_REGEX = /.+/;
-
-const getMatches = (paragraph, regex) => {
-  const matches = [];
-  let array;
-  let prev, opened = 0, closed = 0;
-  while ((array = regex.exec(paragraph)) !== null) {
-    const { index } = array;
-    const elementSize = array[0].length;
-    if (!(paragraph[index + elementSize] === ' ' && paragraph[index - 1] === ' ')) {
-      if (
-        TEXT_REGEX.test(paragraph[index + elementSize]) &&
-        (
-          paragraph[index - 1] === ' ' ||
-          paragraph[index - 1] === '' ||
-          !paragraph[index - 1]
-        )
-      ) {
-        opened++;
-        prev = index;
-      }
-      if (
-        (
-          paragraph[index + elementSize] === ' ' ||
-          paragraph[index + elementSize] === '' ||
-          paragraph[index + elementSize] === '\n' ||
-          !paragraph[index + elementSize]
-        ) &&
-        TEXT_REGEX.test(paragraph[index - 1])
-      ) {
-        closed++;
-        const fullMatchPart = paragraph.slice(prev, index + elementSize);
-        const matchPart = paragraph.slice(prev + elementSize, index);
-        matches.push({fullMatchPart, matchPart});
-        prev = index;
-      }
-    }
-  }
-  if (closed !== opened) {
-    throw Error(`Not closed tags at:\n ${paragraph}`)
-  }
-  return matches
-}
-
-const replacePreformatted = (paragraph) => {
-  const matches = [];
-  let array;
-  while ((array = PREFORMATTED_REGEX.exec(paragraph)) !== null) {
-    const [fullMatchPart, matchPart] = array;
-    matches.push({fullMatchPart, matchPart});
-  }
-  return matches;
-}
+  monospaceWrapper,
+  paragraphWrapper
+} = require("./wrappers/html-wrappers");
+const { boldAnsiWrapper, italicAnsiWrapper, commonAnsiWrapper } = require("./wrappers/ansi-wrappers");
+const { getMatches, replacePreformatted } = require('./utils');
+const { BOLD_REGEX, ITALIC_REGEX, MONOSPACE_REGEX, PREFORMATTED_REGEX } = require('./constants')
 
 const mdProcessor = async (fileName, format = 'html') => {
   const data = await fs.readFile(fileName, 'utf-8');
@@ -75,7 +18,7 @@ const mdProcessor = async (fileName, format = 'html') => {
 
   for (let paragraph of paragraphs) {
     let parsedParagraph = paragraph;
-    const boldMatches = getMatches(parsedParagraph, BOLD_REGEX);
+     const boldMatches = getMatches(parsedParagraph, BOLD_REGEX);
     boldMatches.forEach((match) => {
       if (
         getMatches(match.matchPart, ITALIC_REGEX).length === 0 &&

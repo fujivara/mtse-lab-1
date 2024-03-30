@@ -1,4 +1,4 @@
-const { mdProcessor } = require('./index')
+const { mdProcessor } = require('./src/mdProcessor')
 
 test('Checks bold parsing', () => {
   mdProcessor('./test-data/bold-test.txt').then((data) => {
