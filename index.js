@@ -6,13 +6,18 @@ const {
   italicWrapper,
   monospaceWrapper,
   preformattedWrapper,
-} = require('./wrappers');
+} = require('./html-wrappers');
+const { boldAnsiWrapper, italicAnsiWrapper, commonAnsiWrapper } = require('./ansi-wrappers');
 
 const BOLD_REGEX = /\*\*/g;
 const ITALIC_REGEX = /_/g;
 const MONOSPACE_REGEX = /`/g;
 const PREFORMATTED_REGEX = /```\n([\s\S]*?)```/g;
 const TEXT_REGEX = /.+/;
+
+const fileName = argv[2];
+
+const format= argv[3]?.split('=')[2];
 
 const getMatches = (paragraph, regex) => {
   const matches = [];
@@ -74,26 +79,30 @@ const mdProcessor = async (fileName) => {
 
   for (let paragraph of paragraphs) {
     let parsedParagraph = paragraph;
-    const boldMatches = getMatches(parsedParagraph, BOLD_REGEX, boldWrapper);
+    const boldMatches = getMatches(parsedParagraph, BOLD_REGEX);
     boldMatches.forEach((match) => {
       if (
         getMatches(match.matchPart, ITALIC_REGEX).length === 0 &&
         getMatches(match.matchPart, MONOSPACE_REGEX).length === 0 &&
         getMatches(match.matchPart, PREFORMATTED_REGEX).length === 0
       ) {
-        parsedParagraph = parsedParagraph.replace(match.fullMatchPart, boldWrapper(match.matchPart))
+        parsedParagraph = parsedParagraph.replace(match.fullMatchPart,
+          format === 'html' ? boldWrapper(match.matchPart) : boldAnsiWrapper(match.matchPart)
+        )
       } else {
         throw new Error('Nested formatting');
       }
     })
-    const italicMatches = getMatches(parsedParagraph, ITALIC_REGEX, italicWrapper);
+    const italicMatches = getMatches(parsedParagraph, ITALIC_REGEX);
     italicMatches.forEach((match) => {
       if (
         getMatches(match.matchPart, BOLD_REGEX).length === 0 &&
         getMatches(match.matchPart, MONOSPACE_REGEX).length === 0 &&
         getMatches(match.matchPart, PREFORMATTED_REGEX).length === 0
       ) {
-        parsedParagraph = parsedParagraph.replace(match.fullMatchPart, italicWrapper(match.matchPart))
+        parsedParagraph = parsedParagraph.replace(match.fullMatchPart,
+          format === 'html' ? italicWrapper(match.matchPart) : italicAnsiWrapper(match.matchPart)
+        )
       } else {
         throw new Error('Nested formatting');
       }
@@ -101,17 +110,21 @@ const mdProcessor = async (fileName) => {
     const preformattedMatches = replacePreformatted(parsedParagraph);
     preformattedMatches.forEach((match) => {
       parsedParagraph = parsedParagraph
-        .replace(match.fullMatchPart, preformattedWrapper(match.matchPart))
+        .replace(match.fullMatchPart,
+          format === 'html' ? preformattedWrapper(match.matchPart) : commonAnsiWrapper(match.matchPart)
+        )
     })
 
-    const monospaceMatches = getMatches(parsedParagraph, MONOSPACE_REGEX, monospaceWrapper);
+    const monospaceMatches = getMatches(parsedParagraph, MONOSPACE_REGEX);
     monospaceMatches.forEach((match) => {
       if (
         getMatches(match.matchPart, BOLD_REGEX).length === 0 &&
         getMatches(match.matchPart, ITALIC_REGEX).length === 0 &&
         getMatches(match.matchPart, PREFORMATTED_REGEX).length === 0
       ) {
-        parsedParagraph = parsedParagraph.replace(match.fullMatchPart, monospaceWrapper(match.matchPart))
+        parsedParagraph = parsedParagraph.replace(match.fullMatchPart,
+          format === 'html' ? monospaceWrapper(match.matchPart) : commonAnsiWrapper(match.matchPart)
+        )
       } else {
         throw new Error('Nested formatting');
       }
@@ -124,7 +137,7 @@ const mdProcessor = async (fileName) => {
         .replace(preformattedWrapper(preformattedMatches[index].matchPart), preformattedWrapper(match.matchPart))
     })
 
-    parsedParagraphs.push(paragraphWrapper(parsedParagraph));
+    parsedParagraphs.push(format === 'html' ? paragraphWrapper(parsedParagraph) : parsedParagraph);
   }
   return parsedParagraphs;
 }
