@@ -1,0 +1,1 @@
+You can use monospaced text for code snippets like `print("Hello, world!")`

@@ -8,8 +8,6 @@ const {
   preformattedWrapper,
 } = require('./wrappers');
 
-const inputFile = argv[2];
-
 const BOLD_REGEX = /\*\*/g;
 const ITALIC_REGEX = /_/g;
 const MONOSPACE_REGEX = /`/g;
@@ -131,10 +129,4 @@ const mdProcessor = async (fileName) => {
   return parsedParagraphs;
 }
 
-mdProcessor(inputFile).then((data) => {
-  data.forEach((paragraph) => {
-    console.log(paragraph);
-  });
-}).catch((error) => {
-  console.log(error);
-})
+module.exports = { mdProcessor }
