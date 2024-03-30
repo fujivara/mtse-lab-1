@@ -17,3 +17,10 @@ test('Checks bold parsing', () => {
     expect(data.join('')).toBe('<p>You can use monospaced text for code snippets like <tt>print("Hello, world!")</tt></p>')
   })
 })
+
+
+test('Checks bold ansi parsing', () => {
+  mdProcessor('./test-data/bold-test.txt', 'ansi').then((data) => {
+    expect(data.join('')).toBe('This is a \x1b[1mbold\x1b[22m')
+  })
+})

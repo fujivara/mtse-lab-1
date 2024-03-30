@@ -15,10 +15,6 @@ const MONOSPACE_REGEX = /`/g;
 const PREFORMATTED_REGEX = /```\n([\s\S]*?)```/g;
 const TEXT_REGEX = /.+/;
 
-const fileName = argv[2];
-
-const format= argv[3]?.split('=')[2];
-
 const getMatches = (paragraph, regex) => {
   const matches = [];
   let array;
@@ -71,7 +67,7 @@ const replacePreformatted = (paragraph) => {
   return matches;
 }
 
-const mdProcessor = async (fileName) => {
+const mdProcessor = async (fileName, format = 'html') => {
   const data = await fs.readFile(fileName, 'utf-8');
   const paragraphs = data.split(/\n\s*\n/)
     .map((paragraph) => paragraph.replace(/\r\n/g, "\n").replace(/\r/g, ""));
